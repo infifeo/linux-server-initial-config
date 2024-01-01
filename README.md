@@ -213,3 +213,88 @@ PasswordAuthentication no
 sudo systemctl restart sshd
 ```
 
+در این مرحله به هیچ عنوان از سرور خارج نشید!!! یعنی اتصال قطع نشه!!!
+
+
+
+## بخش ششم :: فایروال
+
+به ترتیب دستورا زیرو تایپ کنید تا تنظیمات فایروال اعمال بشه:
+
+```
+sudo ufw default allow outgoing
+```
+
+```
+sudo ufw default deny incoming
+```
+
+```
+sudo ufw allow ssh
+```
+
+```
+sudo ufw disable && sudo ufw enable
+```
+
+تایپ کنید `y` و `Enter` بزنید.
+
+
+
+## بخش هفتم :: تنظمات شبکه
+
+
+با دستور زیر فایل تنظیمات سیستم را باز کنید:
+
+```
+sudo nano /etc/sysctl.conf
+```
+
+مقادیر زیرو در انتهای فایل بعد از محتوای درون فایل قرار بدید و ذخیره کنید:
+
+```
+net.ipv4.tcp_keepalive_time = 90
+net.ipv4.ip_local_port_range = 1024 65535
+net.ipv4.tcp_fastopen = 3
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr
+fs.file-max = 65535000
+```
+
+برای خروج `ctrl + x` بعد `y` بعد `Enter` بزنید.
+
+با مسئولیت خودتون!!! فایل زیرو باز کنید:
+
+```
+sudo nano /etc/security/limits.conf
+```
+
+و مقادیر زیرو در انتهای فایل قرار بدید:
+
+```
+* soft     nproc          655350
+* hard     nproc          655350
+* soft     nofile         655350
+* hard     nofile         655350
+root soft     nproc          655350
+root hard     nproc          655350
+root soft     nofile         655350
+root hard     nofile         655350
+```
+
+برای خروج `ctrl + x` بعد `y` بعد `Enter` بزنید.
+
+در انتها برای اعمال تغییرات دستور زیرو وارد کنید:
+
+```
+sudo sysctl -p
+```
+
+در پایان یکبار با دستور زیر سرورو ریبوت کنید:
+
+```
+sudo reboot
+```
+
+توجه داشته باشید، با اینکار سرور شما غیر قابل هک نمیشه اما تا حد زیادی از نفود جلوگیری میکنه. همچنین فقط کسی که کلید SSH داشته باشه می تونه به سرور شما متصل بشه.
+امیدوارم مفید واقع بشه.
